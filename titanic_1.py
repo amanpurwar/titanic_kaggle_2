@@ -1,8 +1,6 @@
-""" Writing my first randomforest code.
-Author : AstroDave
-Date : 23rd September 2012
-Revised: 15 April 2014
-please see packages.python.org/milk/randomforests.html for more
+""" Writing our first randomforest code.
+Author : NaHopayega
+Date : 18th dec 2016
 
 """ 
 import pandas as pd
@@ -13,6 +11,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn import linear_model, decomposition, datasets
 from collections import Counter
 from sklearn.svm import SVC
+from sklearn.svm import LinearSVC
 
 # Data cleanup
 # TRAIN DATA
@@ -102,15 +101,17 @@ print 'Training...'
 #indices = np.argsort(importances)[::-1]
 #for f in range(0,5):
 #    print("%d. feature %d (%f)" % (f + 1, indices[f], importances[indices[f]]))
-logreg = linear_model.LogisticRegression(tol=1e-5,C=1e4,solver='newton-cg')
-logreg=logreg.fit(train_data[0::,1::], train_data[0::,0])
+#logreg = linear_model.LogisticRegression(tol=1e-5,C=1e4,solver='newton-cg')
+#logreg=logreg.fit(train_data[0::,1::], train_data[0::,0])
 #clf = SVC()
 #clf=clf.fit(train_data[0::,1::], train_data[0::,0])
+clf=LinearSVC(C=1e3,dual=False,random_state=42)
+clf=clf.fit(train_data[0::,1::], train_data[0::,0])
 print('Original dataset shape  smote {}'.format(Counter(train_data[0::,0])))
 print('Original dataset shape  smote {}'.format(Counter(train_data[0::,5])))
 
 print 'Predicting...'
-output = logreg.predict(test_data).astype(int)
+output = clf.predict(test_data).astype(int)
 
 
 predictions_file = open("myfirstforest.csv", "wb")
