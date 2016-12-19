@@ -102,7 +102,7 @@ print 'Training...'
 #indices = np.argsort(importances)[::-1]
 #for f in range(0,5):
 #    print("%d. feature %d (%f)" % (f + 1, indices[f], importances[indices[f]]))
-logreg = linear_model.LogisticRegression(C=1e4,tol=1e-5)
+logreg = linear_model.LogisticRegression(tol=1e-5,C=1e4,solver='newton-cg')
 logreg=logreg.fit(train_data[0::,1::], train_data[0::,0])
 #clf = SVC()
 #clf=clf.fit(train_data[0::,1::], train_data[0::,0])
@@ -110,7 +110,7 @@ print('Original dataset shape  smote {}'.format(Counter(train_data[0::,0])))
 print('Original dataset shape  smote {}'.format(Counter(train_data[0::,5])))
 
 print 'Predicting...'
-output = clf.predict(test_data).astype(int)
+output = logreg.predict(test_data).astype(int)
 
 
 predictions_file = open("myfirstforest.csv", "wb")
