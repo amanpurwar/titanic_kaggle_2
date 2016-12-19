@@ -30,7 +30,7 @@ def prepareTrainingData():
     train_df['Gender'] = train_df['Sex'].map( {'female': 0, 'male': 1} ).astype(int)
 
     #removing least important class and a dependent class Pclass(dependent on Fare)
-    train_df.drop(['Fare'], axis=1, inplace=True)
+    #train_df.drop(['Fare'], axis=1, inplace=True)
 
 
 
@@ -125,10 +125,12 @@ def testWithAlgo(algo_str, X_train, y_train, X_test):
         indices = np.argsort(importances)[::-1]
         for f in range(0,5):
             print("%d. feature %d (%f)" % (f + 1, indices[f], importances[indices[f]]))
+        clf=forest
     elif algo_str is "logistic":
-        logreg = linear_model.LogisticRegression(tol=1e-5,C=1e4,solver='newton-cg')
-        logreg=logreg.fit(X_train, y_train)
-        logreg.predict(X_test).astype(int)
+        logreg = linear_model.LogisticRegression(tol=1e-5,C=1e4,solver='newton-cg',max_iter=500)
+        logreg = logreg.fit(X_train, y_train)
+        clf = logreg
+
     elif algo_str is "svm":
         #clf = SVC()
         #clf=clf.fit(train_data[0::,1::], train_data[0::,0])
@@ -137,18 +139,18 @@ def testWithAlgo(algo_str, X_train, y_train, X_test):
         #print('Original dataset shape  smote {}'.format(Counter(train_data[0::,0])))
         #print('Original dataset shape  smote {}'.format(Counter(train_data[0::,5])))
 
-        print 'Predicting...'
-        output = clf.predict(X_test).astype(int)
+    print 'Predicting...'
+    output = clf.predict(X_test).astype(int)
 
 
-        predictions_file = open("myfirstforest.csv", "wb")
-        open_file_object = csv.writer(predictions_file)
-        open_file_object.writerow(["PassengerId","Survived"])
-        open_file_object.writerows(zip(ids, output))
-        predictions_file.close()
-        print 'Done.'
+    predictions_file = open("myfirstforest.csv", "wb")
+    open_file_object = csv.writer(predictions_file)
+    open_file_object.writerow(["PassengerId","Survived"])
+    open_file_object.writerows(zip(ids, output))
+    predictions_file.close()
+    print 'Done.'
 
 if __name__ == '__main__':
     X_train, y_train = prepareTrainingData()
     X_test = prepareTestData()
-    testWithAlgo('svm', X_train, y_train, X_test)
+    testWithAlgo('logistic', X_train, y_train, X_test)
