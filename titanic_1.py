@@ -151,7 +151,7 @@ def testWithAlgo(algo_str, X_train, y_train, X_test):
             print("%d. feature %d (%f)" % (f + 1, indices[f], importances[indices[f]]))
         clf=forest
     elif algo_str is "logistic":
-        logreg = linear_model.LogisticRegression(tol=1e-5,C=1e4,solver='newton-cg',max_iter=500)
+        logreg = linear_model.LogisticRegression(tol=1e-5,C=1e5,solver='liblinear',max_iter=500)
         logreg = logreg.fit(X_train, y_train)
         clf = logreg
 
