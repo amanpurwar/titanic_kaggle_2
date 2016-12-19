@@ -30,7 +30,7 @@ def prepareTrainingData():
     train_df['Gender'] = train_df['Sex'].map( {'female': 0, 'male': 1} ).astype(int)
 
     #removing least important class and a dependent class Pclass(dependent on Fare)
-    #train_df.drop(['Parch'], axis=1, inplace=True)
+    train_df.drop(['Fare'], axis=1, inplace=True)
 
 
 
@@ -51,6 +51,14 @@ def prepareTrainingData():
     mean_age = train_df['Age'].dropna().mean()
     if len(train_df.Age[ train_df.Age.isnull() ]) > 0:
         train_df.loc[ (train_df.Age.isnull()), 'Age'] = mean_age
+    # Making categories of the Age class
+    '''
+    for i, row in df.iterrows():
+        ifor_val = 
+        if():
+            ifor_val = something_else
+            df.set_value(i,'Age',ifor_val)
+    '''     
 
     # Remove the Name column, Cabin, Ticket, and Sex (since I copied and filled it to Gender)
     train_df = train_df.drop(['Name', 'Sex', 'Ticket', 'Cabin', 'PassengerId'], axis=1) 
@@ -96,7 +104,7 @@ def prepareTestData():
 
 
     #removing features from test df
-    #test_df.drop(['Parch'], axis=1, inplace=True)
+    test_df.drop(['Fare'], axis=1, inplace=True)
 
     # The data is now ready to go. So lets fit to the train, then predict to the test!
     # Convert back to a numpy array
