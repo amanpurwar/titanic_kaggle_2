@@ -12,6 +12,8 @@ from sklearn import linear_model, decomposition, datasets
 from collections import Counter
 from sklearn.svm import SVC
 from sklearn.svm import LinearSVC
+from xgboost.sklearn import XGBClassifier
+from imblearn.over_sampling import SMOTE
 
 # defining globs
 Ports_dict = {}
@@ -68,15 +70,15 @@ def prepareTrainingData():
     # Forming categories on the basis of Age in train_data
     for x in range(0,891):
         if(train_data[x,2]>0 and train_data[x,2]<5):
-            train_data[x,2]=1
-        if(train_data[x,2]>=5 and train_data[x,2]<10):
-            train_data[x,2]=2
-        if(train_data[x,2]>=10 and train_data[x,2]<15):
             train_data[x,2]=3
+        if(train_data[x,2]>=5 and train_data[x,2]<10):
+            train_data[x,2]=8
+        if(train_data[x,2]>=10 and train_data[x,2]<15):
+            train_data[x,2]=13
         if(train_data[x,2]>=15 and train_data[x,2]<60):
-            train_data[x,2]=4
+            train_data[x,2]=35
         if(train_data[x,2]>=60):
-            train_data[x,2]=5
+            train_data[x,2]=70
         
     return train_data[:, 1:], train_data[:, 0]
 
@@ -127,15 +129,15 @@ def prepareTestData():
     # Forming categories on the basis of Age in test_data
     for x in range(0,418):
         if(test_data[x,1]>0 and test_data[x,1]<5):
-            test_data[x,1]=1
-        if(test_data[x,1]>=5 and test_data[x,1]<10):
-            test_data[x,1]=2
-        if(test_data[x,1]>=10 and test_data[x,1]<15):
             test_data[x,1]=3
+        if(test_data[x,1]>=5 and test_data[x,1]<10):
+            test_data[x,1]=8
+        if(test_data[x,1]>=10 and test_data[x,1]<15):
+            test_data[x,1]=13
         if(test_data[x,1]>=15 and test_data[x,1]<60):
-            test_data[x,1]=4
+            test_data[x,1]=35
         if(test_data[x,1]>=60):
-            test_data[x,1]=5
+            test_data[x,1]=65
 
     return test_data
 
@@ -143,7 +145,7 @@ def prepareTestData():
 def testWithAlgo(algo_str, X_train, y_train, X_test):
     print 'Training...'
     if algo_str is "rforest":
-        forest = RandomForestClassifier(n_estimators=140,criterion='entropy',min_samples_split=5)
+        forest = RandomForestClassifier(n_estimators=250,criterion='entropy',min_samples_split=10,max_features=4)
         forest = forest.fit( X_train, y_train )
         importances = forest.feature_importances_
         indices = np.argsort(importances)[::-1]
@@ -160,8 +162,12 @@ def testWithAlgo(algo_str, X_train, y_train, X_test):
         #clf=clf.fit(train_data[0::,1::], train_data[0::,0])
         clf=LinearSVC(C=1e3,dual=False,random_state=42)
         clf=clf.fit(X_train, y_train)
-        #print('Original dataset shape  smote {}'.format(Counter(train_data[0::,0])))
-        #print('Original dataset shape  smote {}'.format(Counter(train_data[0::,5])))
+    elif algo_str is "xgboost":
+        smte=SMOTE(random_state=42,kind='borderline1')
+        X_smote,y_smote=smte.fit_sample(X_train,y_train)
+        clf=XGBClassifier(n_estimators=160)
+        clf=clf.fit(X_smote,y_smote)
+        
 
     print 'Predicting...'
     output = clf.predict(X_test).astype(int)
@@ -177,4 +183,4 @@ def testWithAlgo(algo_str, X_train, y_train, X_test):
 if __name__ == '__main__':
     X_train, y_train = prepareTrainingData()
     X_test = prepareTestData()
-    testWithAlgo('logistic', X_train, y_train, X_test)
+    testWithAlgo('xgboost', X_train, y_train, X_test)
