@@ -61,7 +61,9 @@ def prepareTrainingData():
     '''     
 
     # Remove the Name column, Cabin, Ticket, and Sex (since I copied and filled it to Gender)
-    train_df = train_df.drop(['Name', 'Sex', 'Ticket', 'Cabin', 'PassengerId'], axis=1) 
+    train_df = train_df.drop(['Name', 'Sex', 'Ticket', 'Cabin', 'PassengerId'], axis=1)
+    #removing feature fare from train_df
+    train_df.drop(['Fare'], axis=1, inplace=True)
     train_data = train_df.values
 
     return train_data[:, 1:], train_data[:, 0]
@@ -103,7 +105,8 @@ def prepareTestData():
     test_df = test_df.drop(['Name', 'Sex', 'Ticket', 'Cabin', 'PassengerId'], axis=1) 
 
 
-    #removing features from test df
+
+    #removing feature fare from test df
     test_df.drop(['Fare'], axis=1, inplace=True)
 
     # The data is now ready to go. So lets fit to the train, then predict to the test!
