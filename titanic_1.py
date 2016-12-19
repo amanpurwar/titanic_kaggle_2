@@ -65,7 +65,19 @@ def prepareTrainingData():
     #removing feature fare from train_df
     train_df.drop(['Fare'], axis=1, inplace=True)
     train_data = train_df.values
-
+    # Forming categories on the basis of Age in train_data
+    for x in range(0,891):
+        if(train_data[x,2]>0 and train_data[x,2]<5):
+            train_data[x,2]=1
+        if(train_data[x,2]>=5 and train_data[x,2]<10):
+            train_data[x,2]=2
+        if(train_data[x,2]>=10 and train_data[x,2]<15):
+            train_data[x,2]=3
+        if(train_data[x,2]>=15 and train_data[x,2]<60):
+            train_data[x,2]=4
+        if(train_data[x,2]>=60):
+            train_data[x,2]=5
+        
     return train_data[:, 1:], train_data[:, 0]
 
 def prepareTestData():
@@ -112,6 +124,18 @@ def prepareTestData():
     # The data is now ready to go. So lets fit to the train, then predict to the test!
     # Convert back to a numpy array
     test_data = test_df.values
+    # Forming categories on the basis of Age in test_data
+    for x in range(0,418):
+        if(test_data[x,1]>0 and test_data[x,1]<5):
+            test_data[x,1]=1
+        if(test_data[x,1]>=5 and test_data[x,1]<10):
+            test_data[x,1]=2
+        if(test_data[x,1]>=10 and test_data[x,1]<15):
+            test_data[x,1]=3
+        if(test_data[x,1]>=15 and test_data[x,1]<60):
+            test_data[x,1]=4
+        if(test_data[x,1]>=60):
+            test_data[x,1]=5
 
     return test_data
 
